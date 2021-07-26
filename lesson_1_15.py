@@ -26,28 +26,40 @@ class TicTakToe:
                           (2,4,6)]
 
     def check_state(self):
-        ch_player = [True]*8
-        ch_computer = [True]*8
-
-        for j in range(len(self.win_combo)):
-            for i in self.win_combo[j]:
-                if i not in self.player:
-                    ch_player[j] = False
-                if i not in self.comp:
-                    ch_computer[j] = False
-
-        f_comp = any(ch_computer)
-        f_player = any(ch_player)
-
-        if f_comp or f_player:
-            self.win = not self.first
-            return False
+        for j in self.win_combo:
+            if self.mas[j[0]] == self.mas[j[1]] == self.mas[j[2]] != FULL:
+                self.win = not self.first
+                return False
 
         if self.mas.count(FULL) == 0:
             self.win = None
             return False
 
         return True
+
+    # def check_state(self):
+    #     ch_player = [True]*8
+    #     ch_computer = [True]*8
+    #
+    #     for j in range(len(self.win_combo)):
+    #         for i in self.win_combo[j]:
+    #             if i not in self.player:
+    #                 ch_player[j] = False
+    #             if i not in self.comp:
+    #                 ch_computer[j] = False
+    #
+    #     f_comp = any(ch_computer)
+    #     f_player = any(ch_player)
+    #
+    #     if f_comp or f_player:
+    #         self.win = not self.first
+    #         return False
+    #
+    #     if self.mas.count(FULL) == 0:
+    #         self.win = None
+    #         return False
+    #
+    #     return True
 
     def go_player(self, sim):
         while True:
@@ -58,9 +70,12 @@ class TicTakToe:
                 if x<4 and x>0 and y<4 and y>0:
                     x -= 1
                     y -= 1
-                    self.player.append(x*3+y)
-                    self.mas[x*3+y] = sim
-                    return
+                    if self.mas[x * 3 + y] == FULL:
+                        self.player.append(x*3+y)
+                        self.mas[x*3+y] = sim
+                        return
+                    else:
+                        print('Это поле уже занято!')
             except:
                 print('Координаты введены не верно, проверьте пожалуйста: 0<х<4, 0<y<4')
 
