@@ -1,6 +1,9 @@
+#TODO: дописать возможность выбора соперника(компьютер\друг)
+#TODO: допистаь засекать время игры
 import random
 
 FULL = '-'
+
 
 class TicTakToe:
     """
@@ -16,6 +19,8 @@ class TicTakToe:
         self.player = []
         self.comp = []
         self.first = True # Первым ходит игрок
+        self.player_sim = 'x'
+        self.computer_sim = 'o'
         self.win_combo = [(0,1,2),
                           (2,5,8),
                           (0,3,6),
@@ -70,9 +75,7 @@ class TicTakToe:
                 if x<4 and x>0 and y<4 and y>0:
                     x -= 1
                     y -= 1
-                    if self.mas[x * 3 + y] == FULL:
-                        self.player.append(x*3+y)
-                        self.mas[x*3+y] = sim
+                    if self.go_(sim, x, y):
                         return
                     else:
                         print('Это поле уже занято!')
@@ -80,15 +83,21 @@ class TicTakToe:
                 print('Координаты введены не верно, проверьте пожалуйста: 0<х<4, 0<y<4')
 
     def go_copmputer(self, sim):
-        print('Ход соперника:')
         while True:
             rng = random.Random()
             x = rng.randrange(3)
             y = rng.randrange(3)
+            if self.go_(sim, x, y):
+                return
+
+    def go_(self, sim, x, y):
+        try:
             if self.mas[x * 3 + y] == FULL:
                 self.comp.append(x * 3 + y)
                 self.mas[x * 3 + y] = sim
-                return
+            return True
+        except:
+            return False
 
     def show(self):
         """
@@ -100,41 +109,41 @@ class TicTakToe:
                 print(self.mas[i*3+j], end=' ')
             print('')
 
-    def game(self, player='x'):
-        computer = 'o'
-        if player == 'o':
-            computer = 'x'
-            self.first = False
-
+    def game(self):
         while self.check_state():
             self.show()
 
             # ход
             if self.first:
-                self.go_player(player)
+                self.go_player(self.player_sim)
             else:
-                self.go_copmputer(computer)
+                print('Ход соперника:')
+                self.go_copmputer(self.computer_sim)
 
             self.first = not self.first
 
         self.show()
         if self.win is not None:
-            if (self.win and player == 'x') or (not self.win and player == 'o'):
+            if (self.win and self.player_sim == 'x') or (not self.win and self.player_sim == 'o'):
                 print('Поздравляем! Вы выиграли!')
             else:
                 print('Сожалею, вы проиграли, попробуйте еще раз!')
         else:
             print('Жаль, закончились клетки для хода!')
 
-
-    def play(self):
+    def choose(self):
         answer = input('Пожалуйста выбирете за кого вы будете играть? (х\о)')
         if answer == 'o':
+            self.player_sim = 'o'
+            self.computer_sim = 'x'
             self.first = False
+
+    def play(self):
+        self.choose()
 
         print('Игра началась!')
 
-        self.game(answer)
+        self.game()
 
         print("Игра закончилась!")
 
